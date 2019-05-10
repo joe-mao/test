@@ -37,12 +37,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     visacommunication.cpp \
-    qtcpcommunication.cpp
+    qtcpcommunication.cpp \
+    global.cpp
 
 HEADERS += \
         mainwindow.h \
     visacommunication.h \
-    qtcpcommunication.h
+    qtcpcommunication.h \
+    global.h
 
 FORMS += \
         mainwindow.ui

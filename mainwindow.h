@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
+#include <map>
+
 
 
 
@@ -20,6 +23,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    uint64_t errorCount = 0;
+    std::map<uint64_t, double> data;
 };
 
 #endif // MAINWINDOW_H
