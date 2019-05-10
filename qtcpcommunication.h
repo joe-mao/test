@@ -13,11 +13,13 @@ public:
 
 signals:
     void connectToqTcpDeviceSignals(bool status);//发送连接成功与否信号,true表示连接成功，false表示连接失败
+    void disconnectFromqTcpDeviceSignals(bool status);//设备断开信号，暂定true表示成功，false表示失败,暂定一直为true
 
 
 public slots:
     void connectToqTcpDevice(QString & deviceName, quint16 port);//连接到设备
-    void disconnectFromqTcpDevice();//从Tcp设备断开
+    void connectToqTcpDeviceStatus();//是否成功连接到信号
+    void disconnectFromqTcpDeviceStatus();//从Tcp设备断开
     void writeToqTcpDevice(QString & scpiCommand);
     void readFromqTcpDevice();
 

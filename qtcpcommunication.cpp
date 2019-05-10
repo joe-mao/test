@@ -5,6 +5,9 @@ const unsigned readBuffer = 512 * 1024;//1 * 1024 * 1024;//M
 qTcpCommunication::qTcpCommunication(QObject *parent) : QObject(parent)
 {
     qTcpDevice = new QTcpSocket(this);
+    connect(qTcpDevice, &QTcpSocket::connected, this, &qTcpCommunication::connectToqTcpDeviceStatus);
+    connect(qTcpDevice, &QTcpSocket::disconnected, this, &qTcpCommunication::disconnectFromqTcpDeviceStatus);
+
 }
 
 
@@ -13,9 +16,10 @@ void qTcpCommunication::connectToqTcpDevice(QString & deviceName, quint16 port)
     qTcpDevice->connectToHost(deviceName, port);
 }
 
-void qTcpCommunication::disconnectFromqTcpDevice()
-{
+void qTcpCommunication::disconnectFromqTcpDeviceStatus()
+{ 
     qTcpDevice->abort();
+    emit disconnectFromqTcpDeviceSignals(true);
 }
 
 void qTcpCommunication::writeToqTcpDevice(QString & scpiCommand)
@@ -42,4 +46,9 @@ void qTcpCommunication::readFromqTcpDevice()
             break;
         }
     }
+}
+
+void qTcpCommunication::connectToqTcpDeviceStatus()
+{
+    emit connectToqTcpDeviceSignals(true);
 }
