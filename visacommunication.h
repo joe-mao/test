@@ -20,7 +20,7 @@ public slots:
     void connectToVISADevice(QString & deviceName);//连接到VISA设备，参数表示需要连接的设备的名字，需按照VISA格式配置
     void disconnectFromVISADevice();//从链接的VISA设备断开
 
-    void writeToViasDevice(QString & scpiCommand);//向VISA设备发送信息
+    void writeToViasDevice(QString  scpiCommand);//向VISA设备发送信息
     void readFromViasDevice(QString & readBuffer);//从VISA设备读取信息
 
 

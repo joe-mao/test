@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>246</height>
+    <width>441</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,6 +15,50 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>80</y>
+      <width>161</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>不良发生次数:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_start">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>150</y>
+      <width>181</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>开始测试</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_stop">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>150</y>
+      <width>181</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>结束测试</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -29,43 +73,43 @@
      </font>
     </property>
     <property name="text">
-     <string>不良发生次数:</string>
+     <string>总测试次数:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLabel" name="lb_totalCount">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>30</y>
-      <width>71</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_start">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>100</y>
-      <width>181</width>
+      <x>250</x>
+      <y>20</y>
+      <width>171</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>开始测试</string>
+     <string>0</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_stop">
+   <widget class="QLabel" name="lb_errorCount">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>100</y>
-      <width>181</width>
+      <x>250</x>
+      <y>80</y>
+      <width>161</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>结束测试</string>
+     <string>0</string>
     </property>
    </widget>
   </widget>
@@ -74,7 +118,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>434</width>
+     <width>441</width>
      <height>23</height>
     </rect>
    </property>

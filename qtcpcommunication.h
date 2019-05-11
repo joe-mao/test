@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include "global.h"
+#include <QAbstractSocket>
 
 
 class qTcpCommunication : public QObject
@@ -17,16 +19,20 @@ signals:
 
 
 public slots:
-    void connectToqTcpDevice(QString & deviceName, quint16 port);//连接到设备
+    void connectToqTcpDevice(QString deviceName, quint16 port);//连接到设备
     void connectToqTcpDeviceStatus();//是否成功连接到信号
     void disconnectFromqTcpDeviceStatus();//从Tcp设备断开
-    void writeToqTcpDevice(QString & scpiCommand);
+    void disconnectedFromTcpDeviceManual();//手动断开
+    void writeToqTcpDevice(QString scpiCommand);
     void readFromqTcpDevice();
+    void deviceConnectError(QAbstractSocket::SocketError socketError);
 
 
 
 private:
     QTcpSocket * qTcpDevice;
+    Global * myGlobal;
+
 };
 
 #endif // QTCPCOMMUNICATION_H

@@ -36,7 +36,7 @@ void visaCommunication::disconnectFromVISADevice()
     }
 }
 
-void visaCommunication::writeToViasDevice(QString & scpiCommand)
+void visaCommunication::writeToViasDevice(QString scpiCommand)
 {
     std::string str = scpiCommand.toStdString();
     if(str == ""){
