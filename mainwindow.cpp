@@ -11,8 +11,8 @@
 //定義延時函數
 void mySleep(int msec)
 {
-    QTime reachTime = QTime::currentTime().addMSecs(msec);
-    while( QTime::currentTime() < reachTime){
+    QDateTime reachTime = QDateTime::currentDateTime().addMSecs(msec);
+    while( QDateTime::currentDateTime() < reachTime){
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setFixedSize(441, 284);
+
     myGlobal = Global::getInstance();
 
 
@@ -59,43 +61,84 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btn_start_clicked()
 {
+    this->ui->btn_start->setEnabled(false);
     forever{
         if(myGlobal->flag){
             //qDebug()<<myGlobal->flag;
             //flag为true则一直执行
-           // emit writeToDeviceSignal("SYST:PREset");
+            // emit writeToDeviceSignal("SYST:PREset");
 
-           // emit writeToDeviceSignal("*WAI");
+            // emit writeToDeviceSignal("*WAI");
 
-            emit writeToDeviceSignal("CALCulate1:MEASure1:PARameter 'S21'");
+            if(myGlobal->S2112){
+                //默认s21
+                emit writeToDeviceSignal("CALCulate1:MEASure1:PARameter 'S21'");
 
-            emit writeToDeviceSignal("*WAI");
+                emit writeToDeviceSignal("*WAI");
 
-            emit writeToDeviceSignal("SENS:SWE:MODE Single");
+                emit writeToDeviceSignal("SENS:SWE:MODE Single");
 
-            emit writeToDeviceSignal("*WAI");
+                emit writeToDeviceSignal("*WAI");
 
-            //DISP:WIND:Y:AUTO
-            emit writeToDeviceSignal("DISP:WIND:Y:AUTO");
+                //DISP:WIND:Y:AUTO
+                emit writeToDeviceSignal("DISP:WIND:Y:AUTO");
 
-            emit writeToDeviceSignal("CALCulate1:MEASure1:DATA:FDATA?");
+                emit writeToDeviceSignal("CALCulate1:MEASure1:DATA:FDATA?");
 
-            mySleep(5 * 1000);
+                mySleep(4 * 1000);
 
-            processData();
-            writeErrorToFile();
-            //每循环处理完一次数据，则将总次数加1，并更新显示
-            ++myGlobal->totalCount;
-            this->ui->lb_totalCount->setText(QString::number(myGlobal->totalCount));
-            this->ui->lb_errorCount->setText(QString::number(myGlobal->errorCount));
+                processData();
+                writeErrorToFile();
+                //每循环处理完一次数据，则将总次数加1，并更新显示
+                ++myGlobal->totalCount;
+                this->ui->lb_totalCount->setText(QString::number(myGlobal->totalCount));
+                this->ui->lb_errorCount->setText(QString::number(myGlobal->errorCount));
 
-            //清空数据，处理下一次的数据
-            myGlobal->qstrData.clear();//清空接受的原始数据（包含的全部都是db值）
-            myGlobal->data.clear();//清空data数据map类型（频点和db值对应）
-            myGlobal->errorData.clear();//清空查超出范围的数据
-            myGlobal->errFlag = false;
+                //清空数据，处理下一次的数据
+                myGlobal->qstrData.clear();//清空接受的原始数据（包含的全部都是db值）
+                myGlobal->data.clear();//清空data数据map类型（频点和db值对应）
+                myGlobal->errorData.clear();//清空查超出范围的数据
+                myGlobal->errFlag = false;
 
-            mySleep(2 * 1000);
+                myGlobal->S2112 = false;//下一次跑s12
+
+                mySleep(1 * 1000);
+            }else
+            {
+                //否则s12
+                //默认s21
+                emit writeToDeviceSignal("CALCulate1:MEASure1:PARameter 'S12'");
+
+                emit writeToDeviceSignal("*WAI");
+
+                emit writeToDeviceSignal("SENS:SWE:MODE Single");
+
+                emit writeToDeviceSignal("*WAI");
+
+                //DISP:WIND:Y:AUTO
+                emit writeToDeviceSignal("DISP:WIND:Y:AUTO");
+
+                emit writeToDeviceSignal("CALCulate1:MEASure1:DATA:FDATA?");
+
+                mySleep(4 * 1000);
+
+                processData();
+                writeErrorToFile();
+                //每循环处理完一次数据，则将总次数加1，并更新显示
+                ++myGlobal->totalCount;
+                this->ui->lb_totalCount->setText(QString::number(myGlobal->totalCount));
+                this->ui->lb_errorCount->setText(QString::number(myGlobal->errorCount));
+
+                //清空数据，处理下一次的数据
+                myGlobal->qstrData.clear();//清空接受的原始数据（包含的全部都是db值）
+                myGlobal->data.clear();//清空data数据map类型（频点和db值对应）
+                myGlobal->errorData.clear();//清空查超出范围的数据
+                myGlobal->errFlag = false;
+                myGlobal->S2112 = true;
+
+                mySleep(1 * 1000);
+
+            }
         }else{
             break;
         }
@@ -142,6 +185,11 @@ void MainWindow::writeErrorToFile()
          QDateTime current_date_time = QDateTime::currentDateTime();
          QString current_date = current_date_time.toString("yyyy-MM-dd");
          QString current_time = current_date_time.toString("hh:mm:ss.zzz ");
+         if(myGlobal->S2112){
+             out<<"S21   ";
+         }else{
+             out<<"S12   ";
+         }
          out <<current_date<<"      "<<current_time<<"      ";
          for(std::map<uint64_t, double>::iterator it = myGlobal->errorData.begin(); it != myGlobal->errorData.end(); it++){
              out<<"("<<QString::number(it->first)<<","<<QString::number(it->second)<<")"<<" ";
@@ -171,6 +219,44 @@ void MainWindow::processData()
 
     for(std::map<uint64_t, double>::iterator it = myGlobal->data.begin(); it != myGlobal->data.end(); it++){
         //qDebug()<<it->first<<"***"<<it->second;
+//        if(100000 <= it->first && it->first <= 300000){
+//            if(fabs(it->second) >= 0.03){
+//                //范围之外
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }else if(300000 < it->first && it->first <= 10000000){
+//            if(fabs(it->second) >= 0.03){
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }else if(10000000 < it->first && it->first <= 3000000000){
+//            if(fabs(it->second) >= 0.03){
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }else if(3000000000 < it->first && it->first <= 6000000000){
+//            if(fabs(it->second) >= 0.03){
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }else if(6000000000 < it->first && it->first <= 8500000000){
+//            if(fabs(it->second) >= 0.03){
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }else if(8500000000 < it->first && it->first <= 9000000000){
+//            if(fabs(it->second) >= 0.03){
+//                myGlobal->errorData[it->first] = it->second;
+//                myGlobal->errFlag = true;
+//            }
+
+//        }
         if(100000 <= it->first && it->first <= 300000){
             if(fabs(it->second) > 0.04){
                 //范围之外
@@ -212,6 +298,7 @@ void MainWindow::processData()
     }
 
     if(myGlobal->errFlag){
+        //有一个频点fail则表示fail,此时表示error发生myGlobal->errFlag表示true
         ++myGlobal->errorCount;
     }
 }

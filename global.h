@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDateTime>
 
+
 class Global
 {
 
@@ -23,6 +24,8 @@ public:
     std::map<uint64_t, double> errorData;
 
     bool flag = true;
+    bool S2112 = true;//true表示s21，false表示s12
+
 
     QString qstrData = "";
 
